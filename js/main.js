@@ -26,6 +26,20 @@ const z = 0; // block-scoped. Can't be reassigned (it's constant!)
 // This part class should take a name and list of types
 
 // add class here
+class Part {
+    constructor(name, types) {
+        this.name = name;
+        this.types = types;
+        this.type = types[0]; // default to the first type
+        this.image = new Image(); // create a new image object
+        this.image.src = `img/${this.name}-${this.type}.png`; // set the source of the image
+    }
+
+    changeType(type) {
+        this.type = type;
+        this.image.src = `img/${this.name}-${this.type}.png`; // update image
+    }
+}
 
 
 // Now! onto the actual character object
@@ -35,23 +49,59 @@ class Character {
         this.eyes = eyes;
         this.feet = feet;
 
-        this.canvas = // how do we get the canvas?
+        this.form = document.getElementById("form");
+        this.canvas = document.getElementById("outputImage"); // how do we get the canvas?
     }
 
     createForm() {
         // each part of the character will need a form input
-        console.log("Create Form Unimplemented!");
 
         // create a input for each part
+        this.makeInput(this.body);
+        this.makeInput(this.eyes);
+        this.makeInput(this.feet);
+    }
 
-        // add event listeners to each input
+    makeInput(part) {
+        // make a div to hold all parts of our input
+        const container = document.createElement("div");
 
+        // make a label for the part
+        const label = document.createElement("label");
+        label.innerHTML = part.name;
+        container.appendChild(label);
+        // make a select input
+        const select = document.createElement("select");
+        // add options to the select input
+        for (let i = 0; i < part.types.length; i++) {
+            const option = document.createElement("option");
+            option.value = part.types[i];
+            option.innerHTML = part.types[i];
+            select.appendChild(option);
+        }
+        // add the select input to the container
+        container.appendChild(select);
+        // add the container to the form
+        this.form.appendChild(container);
+        // add event listener to the select input
+        select.addEventListener("change", (e) => {
+            part.changeType(e.target.value);
+            this.draw();
+        });
     }
 
     draw() {
         // this function will draw the character
-        // by calling the draw method of each part
-        console.log("Draw Unimplemented!");
+        // get the canvas context
+        const ctx = this.canvas.getContext("2d");
+        // clear the canvas
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // draw the body
+        ctx.drawImage(this.body.image, 0, 0);
+        // draw the eyes
+        ctx.drawImage(this.eyes.image, 0, 0);
+        // draw the feet
+        ctx.drawImage(this.feet.image, 0, 0);
     }
 }
 
@@ -81,4 +131,11 @@ const character = new Character(
     new Part("feet", feetTypes),
 );
 
-character
+// Create our form 
+character.createForm();
+// draw the default character
+character.draw();
+
+// and done!! good jorb :D
+// Changes to the form should update the result
+// and redraw the character
