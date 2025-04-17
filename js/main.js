@@ -32,12 +32,16 @@ class Part {
         this.types = types;
         this.type = types[0]; // default to the first type
         this.image = new Image(); // create a new image object
-        this.image.src = `img/${this.name}-${this.type}.png`; // set the source of the image
+        this.setImageSource(); // set the source of the image
+    }
+
+    setImageSource() {
+        this.image.src = `img/${this.name}-${this.type}.png`;
     }
 
     changeType(type) {
         this.type = type;
-        this.image.src = `img/${this.name}-${this.type}.png`; // update image
+        this.setImageSource(); // update image
     }
 }
 
@@ -86,13 +90,28 @@ class Character {
         // add event listener to the select input
         select.addEventListener("change", (e) => {
             part.changeType(e.target.value);
-            this.draw();
+            character.draw();
         });
     }
 
-    draw() {
+    async draw() {
+        // Wait for all images to load
+        const loadImage = (image) =>
+            new Promise((resolve) => {
+                if (image.complete) {
+                    resolve(); // Resolve immediately if the image is already loaded
+                } else {
+                    image.onload = resolve;
+                }
+            });
+
+        await Promise.all([
+            loadImage(this.body.image),
+            loadImage(this.eyes.image),
+            loadImage(this.feet.image),
+        ]);
+
         // this function will draw the character
-        // get the canvas context
         const ctx = this.canvas.getContext("2d");
         // clear the canvas
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
