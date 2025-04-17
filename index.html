@@ -9,9 +9,6 @@
     <link rel="icon" href="./img/favicon.ico" type="image/x-icon">
     
     <!-- These lines load in and run our code on startup -->
-    <script src="./js/libraries/jquery-3.7.1.min.js"></script>
-    <script src="./js/libraries/popper.min.js"></script>
-    <script src="./js/libraries/bootstrap.min.js"></script>
     <script src="./js/main.js" type="module"></script>
   </head>
   <body>
@@ -22,6 +19,7 @@
         <div class="card-body">
           <h3 class="card-title">Inputs</h3>
           <!-- Add editor inputs here -->
+          <form id="form"></form>
         </div>
       </div>
 
@@ -33,5 +31,29 @@
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('outputImage');
+
+        // Set canvas dimensions
+        canvas.width = 500;
+        canvas.height = 500;
+
+        const downloadButton = document.createElement('button');
+        downloadButton.textContent = 'Download Image';
+        downloadButton.className = 'btn btn-primary mt-3';
+
+        // Add download functionality
+        downloadButton.addEventListener('click', () => {
+          const link = document.createElement('a');
+          link.download = 'character.png';
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+
+        // Append the button below the canvas
+        canvas.parentElement.appendChild(downloadButton);
+      });
+    </script>
   </body>
 </html>
